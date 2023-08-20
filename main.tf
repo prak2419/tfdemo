@@ -33,7 +33,7 @@ resource "azurerm_network_security_group" "nsg"{
 }
 
 resource "azurerm_network_security_rule" "testrules" {
-    for_each                    = local.nsgrules 
+    for_each                    = local.nsgrules
     name                        = each.key
     direction                   = each.value.direction
     access                      = each.value.access
@@ -89,7 +89,7 @@ resource "azurerm_network_interface" "nic" {
       private_ip_address_allocation = "Dynamic"
       public_ip_address_id = azurerm_public_ip.publicip.id
     }
-    
+
 }
 
 resource "azurerm_virtual_machine_extension" "extension" {
@@ -106,20 +106,6 @@ resource "azurerm_virtual_machine_extension" "extension" {
     SETTINGS
 }
 
-resource "azurerm_storage_account" "storage" {
-    name = "tfdemostorageci02"
-    resource_group_name = azurerm_resource_group.rg.name
-    location = azurerm_resource_group.rg.location
-    account_tier = "Standard"
-    account_replication_type = "LRS"
-}
-
-resource "azure_storage_Account_container" "container" {
-    name = "tf-demo-container-ci"
-    storage_account_name = azurerm_storage_account.storage.name
-    container_access_type = "private"
-}
-
 resource "azurerm_virtual_machine" "vm" {
     depends_on = [azurerm_subnet.subnet]
     name = "tf-demo-vm-ci"
@@ -131,8 +117,8 @@ resource "azurerm_virtual_machine" "vm" {
     delete_data_disks_on_termination = true
     storage_image_reference {
         publisher = "Canonical"
-        offer = "UbuntuServer"
-        sku = "20.04-LTS"
+        offer = "0001-com-ubuntu-server-jammy"
+        sku = "22_04-lts-gen2"
         version = "latest"
     }
     storage_os_disk {
@@ -148,8 +134,21 @@ resource "azurerm_virtual_machine" "vm" {
         admin_username = "rajanaka"
         admin_password = "Ramaz@770866"
     }
-
     os_profile_linux_config {
         disable_password_authentication = false
     }
+}
+
+resource "azurerm_storage_account" "storage" {
+    name = "tfdemostorageci02"
+    resource_group_name = azurerm_resource_group.rg.name
+    location = azurerm_resource_group.rg.location
+    account_tier = "Standard"
+    account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_container" "container" {
+    name = "tf-demo-container-ci"
+    storage_account_name = azurerm_storage_account.storage.name
+    container_access_type = "private"
 }
