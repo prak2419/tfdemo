@@ -1,5 +1,5 @@
-# We strongly recommend using the required_providers block to set the
-# Azure Provider source and version being used
+# We strongly recommend using the required_providers block to set the here
+# Azure Provider source and version being used - Test
 terraform {
   required_providers {
     azurerm = {
